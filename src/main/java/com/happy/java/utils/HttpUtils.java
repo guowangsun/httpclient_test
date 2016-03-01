@@ -1,4 +1,4 @@
-package com.qunar.flight.inter.utils;
+package com.happy.java.utils;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;

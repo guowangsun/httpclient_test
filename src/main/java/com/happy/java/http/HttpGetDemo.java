@@ -1,9 +1,9 @@
-package com.qunar.flight.inter.itts;
+package com.happy.java.http;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.io.Closer;
-import com.qunar.flight.inter.utils.HttpUtils;
+import com.happy.java.utils.HttpUtils;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;

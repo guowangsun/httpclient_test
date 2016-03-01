@@ -1,4 +1,4 @@
-package com.qunar.flight.inter.itts;
+package com.happy.java.http;
 
 import com.google.common.collect.Maps;
 
