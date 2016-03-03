@@ -11,7 +11,8 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -49,6 +50,74 @@ public class HttpPostDemo {
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formParams, Consts.UTF_8);
             HttpPost httpPost = new HttpPost(url);
             httpPost.setEntity(entity);
+            CloseableHttpResponse httpResponse = closer.register(httpClient.execute(httpPost));
+            String contentType = httpResponse.getEntity().getContentType().getValue();
+            String charset = null;
+            if (contentType.contains("charset")) {
+                charset = contentType.substring(contentType.indexOf("charset") + 8);
+            }
+            result = HttpUtils.readStringFromStream(closer.register(httpResponse.getEntity().getContent()), charset);
+        } catch (ClientProtocolException e) {
+            LOGGER.error("ClientProtocolException", e);
+        } catch (IOException e) {
+            LOGGER.error("IOException", e);
+        } catch (Exception e) {
+            LOGGER.error("HttpGet Exception", e);
+        } finally {
+            try {
+                closer.close();
+            } catch (IOException e) {
+                LOGGER.error("close Exception", e);
+            }
+        }
+        return result;
+    }
+
+    public static String httpPost(String url, String params) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(url), "URL is null or empty!");
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(params), "params is null or empty!");
+
+        String result = null;
+        Closer closer = Closer.create();
+        CloseableHttpClient httpClient = closer.register(HttpClients.createDefault());
+        try {
+            StringEntity stringEntity = new StringEntity(params);
+            HttpPost httpPost = new HttpPost(url);
+            httpPost.setEntity(stringEntity);
+            CloseableHttpResponse httpResponse = closer.register(httpClient.execute(httpPost));
+            String contentType = httpResponse.getEntity().getContentType().getValue();
+            String charset = null;
+            if (contentType.contains("charset")) {
+                charset = contentType.substring(contentType.indexOf("charset") + 8);
+            }
+            result = HttpUtils.readStringFromStream(closer.register(httpResponse.getEntity().getContent()), charset);
+        } catch (ClientProtocolException e) {
+            LOGGER.error("ClientProtocolException", e);
+        } catch (IOException e) {
+            LOGGER.error("IOException", e);
+        } catch (Exception e) {
+            LOGGER.error("HttpGet Exception", e);
+        } finally {
+            try {
+                closer.close();
+            } catch (IOException e) {
+                LOGGER.error("close Exception", e);
+            }
+        }
+        return result;
+    }
+
+    public static String httpPost(String url, byte[] params) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(url), "URL is null or empty!");
+        Preconditions.checkNotNull(params, "params is null or empty!");
+
+        String result = null;
+        Closer closer = Closer.create();
+        CloseableHttpClient httpClient = closer.register(HttpClients.createDefault());
+        try {
+            ByteArrayEntity byteArrayEntity = new ByteArrayEntity(params);
+            HttpPost httpPost = new HttpPost(url);
+            httpPost.setEntity(byteArrayEntity);
             CloseableHttpResponse httpResponse = closer.register(httpClient.execute(httpPost));
             String contentType = httpResponse.getEntity().getContentType().getValue();
             String charset = null;
